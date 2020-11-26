@@ -4,7 +4,7 @@
 #include <time.h>
 
 
-float matmul(int runs, int dim,int first)
+float* matmul(int runs, int dim,int first)
 {
     float *A, *B, *C;
     int m, n, p, i, r;
@@ -51,7 +51,9 @@ float matmul(int runs, int dim,int first)
                     m, n, p, alpha, A, p, B, n, beta, C, n);
     }
     s_elapsed = (dsecnd() - s_initial) / runs;
-    float returner=s_elapsed*1000;
+    static float returner[2];
+    returner[0]=s_elapsed*1000;
+    returner[1]=(2.0*m*n*p)*1E-9/s_elapsed;
 
     
     mkl_free(A);
@@ -79,8 +81,8 @@ int main(){
     int map[]={4,8,16,32,64,128,256,512,128*7,1024,2048,4096};
     int iter;
     for(iter=0;iter<12;++iter){
-        float time=matmul(1,map[iter],1);
-        printf("for %d, the time is: %f\n",map[iter],time);
+        float *time=matmul(1,map[iter],1);
+        printf("for %d, the time is %f and gflops are %f \n",map[iter],time[0],time[1]);
     }
 
 }
