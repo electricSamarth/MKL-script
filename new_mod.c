@@ -4,7 +4,7 @@
 #include <time.h>
 
 
-float* matmul(int runs, int dim,int first)
+double* matmul(int runs, int dim,int first)
 {
     float *A, *B, *C;
     int m, n, p, i, r;
@@ -24,7 +24,6 @@ float* matmul(int runs, int dim,int first)
         mkl_free(A);
         mkl_free(B);
         mkl_free(C);(s_elapsed * 1000);
-        return 1;
     }
     time_t t;
     srand((unsigned)time(&t));
@@ -50,8 +49,9 @@ float* matmul(int runs, int dim,int first)
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
                     m, n, p, alpha, A, p, B, n, beta, C, n);
     }
+
     s_elapsed = (dsecnd() - s_initial) / runs;
-    static float returner[2];
+    static double returner[2];
     returner[0]=s_elapsed*1000;
     returner[1]=(2.0*m*n*p)*1E-9/s_elapsed;
 
@@ -81,7 +81,7 @@ int main(){
     int map[]={4,8,16,32,64,128,256,512,128*7,1024,2048,4096};
     int iter;
     for(iter=0;iter<12;++iter){
-        float *time=matmul(1,map[iter],1);
+        double *time=matmul(1,map[iter],1);
         printf("for %d, the time is %f and gflops are %f \n",map[iter],time[0],time[1]);
     }
 
