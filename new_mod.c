@@ -49,10 +49,11 @@ double* matmul(int runs, int dim,int first)
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
                     m, n, p, alpha, A, p, B, n, beta, C, n);
     }
-
-    s_elapsed = (dsecnd() - s_initial) / runs;
+    double lom=(dsecnd() - s_initial);
+    
     static double returner[2];
     returner[0]=s_elapsed*1000;
+    
     returner[1]=(2.0*m*n*p)*1E-9/s_elapsed;
 
     
