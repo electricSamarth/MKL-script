@@ -4,7 +4,7 @@
 #include <time.h>
 
 
-double* matmul(int runs, int dim,int first)
+double* matmul(int runs, int dim)
 {
     float *A, *B, *C;
     int m, n, p, i, r;
@@ -38,6 +38,10 @@ double* matmul(int runs, int dim,int first)
     for (i = 0; i < (m*n); i++) {
         C[i] = 0.0;
     }
+    int max_threads = mkl_get_max_threads();
+
+    printf ("%d threads, total_time_sec: ", max_threads);
+     mkl_set_num_threads(max_threads);
 
     
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
@@ -50,10 +54,10 @@ double* matmul(int runs, int dim,int first)
                     m, n, p, alpha, A, p, B, n, beta, C, n);
     }
     double lom=(dsecnd() - s_initial);
-    
+    printf("%f ",lom);
+    s_elapsed=lom/runs;
     static double returner[2];
     returner[0]=s_elapsed*1000;
-    
     returner[1]=(2.0*m*n*p)*1E-9/s_elapsed;
 
     
@@ -61,18 +65,10 @@ double* matmul(int runs, int dim,int first)
     mkl_free(B);
     mkl_free(C);
     
-    if (s_elapsed < 0.9/runs) {
-        s_elapsed=1.0/runs/s_elapsed;
-        i=(int)(s_elapsed*runs)+1;
-        
-    }
     
-    if(first==0){
-    //printf (" Example completed. \n\n");
-    return returner;}
-    else{
-        matmul(i,dim,0);
-    }
+
+    return returner;
+    
     
     
     
@@ -80,9 +76,10 @@ double* matmul(int runs, int dim,int first)
 
 int main(){
     int map[]={4,8,16,32,64,128,256,512,128*7,1024,2048,4096};
+    int runs[]={10000000,10000000,10000000,10000000,1000000,100000,10000,10000, 1000, 1000, 100, 10};
     int iter;
     for(iter=0;iter<12;++iter){
-        double *time=matmul(1,map[iter],1);
+        double *time=matmul(runs[iter],map[iter]);
         printf("for %d, the time is %f and gflops are %f \n",map[iter],time[0],time[1]);
     }
 
