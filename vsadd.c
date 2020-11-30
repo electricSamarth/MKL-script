@@ -53,7 +53,11 @@ double* adder_vsadd(int runs, int dim){
 
 int  main()
 {
-	double *time= adder_vsadd(1000000-1000,128*128);
-	printf("the time is %f and gflops are %f \n",time[0],time[1]);
-	return 0;
+	int map[]={4,8,16,32,64,128,256,512,128*7,1024,2048,4096};
+    int runs[]={100000000,100000000,100000000,100000000,100000000,100000000,100000000,100000000, 100000000, 100000000, 100000000, 100000000};
+    int iter;
+    for(iter=0;iter<12;++iter){
+        double *time=adder_vsadd(runs[iter],map[iter]);
+        printf("for %d, the time is %f and gflops are %f \n",map[iter],time[0],time[1]);
+    }
 }

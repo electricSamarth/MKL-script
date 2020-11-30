@@ -13,6 +13,9 @@ double* adder_axpy(int runs, int dim)
 	int i,r; //for looping
 	double s_initial, s_elapsed; // for time tracking
 
+	//get max threads 
+	mkl_set_num_threads(mkl_get_max_threads());
+	
 	//initialize size
 	n=dim;
 
@@ -83,10 +86,11 @@ double* adder_axpy(int runs, int dim)
 }
 
 int main(){
-	int runs=1000000;
-	int dim=128*128;
-	int f=1;
-	double *time=adder_axpy(runs,dim);
-	printf("the time is %f and gflops are %f \n",time[0],time[1]);
-
+	int map[]={4,8,16,32,64,128,256,512,128*7,1024,2048,4096};
+    int runs[]={100000000,100000000,100000000,100000000,100000000,100000000,100000000,100000000, 100000000, 100000000, 100000000, 100000000};
+    int iter;
+    for(iter=0;iter<12;++iter){
+        double *time=adder_axpy(runs[iter],map[iter]);
+        printf("for %d, the time is %f and gflops are %f \n",map[iter],time[0],time[1]);
+    }
 }
